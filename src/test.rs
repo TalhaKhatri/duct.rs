@@ -456,6 +456,21 @@ fn test_full_env() {
 }
 
 #[test]
+fn test_env_remove() {
+    // Set an environment variable in the parent. Note that the lowercase name
+    // here is important: it tests out case normalization on Windows.
+    let var_name = "test_env_remove_var";
+    env::set_var(var_name, "junk2");
+
+    // Run a command with that variable removed.
+    let output = cmd!(path_to_exe("print_env"), var_name)
+        .env_remove(var_name)
+        .read()
+        .unwrap();
+    assert_eq!("", output);
+}
+
+#[test]
 fn test_broken_pipe() {
     // If the input writing thread fills up its pipe buffer, writing will block. If the process
     // on the other end of the pipe exits while writer is waiting, the write will return an
